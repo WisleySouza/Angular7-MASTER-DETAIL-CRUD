@@ -1,9 +1,9 @@
+import { Category } from './../shared/category.model';
 
 import { element } from 'protractor';
 
 import { Component, OnInit } from '@angular/core';
 
-import { Category } from '../shared/category.model';
 import { CategoryService } from '../shared/category.service';
 
 @Component({
@@ -25,11 +25,15 @@ export class CategoryListComponent implements OnInit {
     )
   }
 
-  deleteCategory(category: Category) {
-    this.categoryService.delete(category.id).subscribe(
-      () => this.categories = this.categories.filter(element => element != category.id)//,
-      // ()=> alert("Erro ao tentar excluir!")    
-    )
+  deleteCategory(category: any) {
+    const resp = confirm('Deseja realmente Excluir este item? ' + category.name);
+
+    if (resp) {
+      this.categoryService.delete(category.id).subscribe(
+        () => this.categories = this.categories.filter(element => element != category),
+        () => alert("Erro ao tentar excluir!")
+      )
+    }
   }
 
 }
