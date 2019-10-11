@@ -23,7 +23,7 @@ export class CategoryService {
 
   getById(id: number): Observable<Category> {
     //interpolação
-    const url = '${this.apiPath}/${id}';
+    const url = `${this.apiPath}/${id}`;
     return this.http.get(this.apiPath).pipe(
       catchError(this.handlerError),
       map(this.jsonDataCategory)
