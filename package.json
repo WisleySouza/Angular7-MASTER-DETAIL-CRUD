@@ -11,7 +11,7 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "~8.2.9",
+    "@angular/animations": "^8.2.11",
     "@angular/common": "~8.2.9",
     "@angular/compiler": "~8.2.9",
     "@angular/core": "~8.2.9",
@@ -26,11 +26,11 @@
     "currency-formatter": "^1.5.5",
     "jquery": "^3.4.1",
     "moment": "^2.24.0",
+    "ngx-toastr": "^11.1.2",
     "primeicons": "^2.0.0",
     "primeng": "^8.0.4",
     "rxjs": "~6.4.0",
-    "toastr": "^2.1.4",
-    "tslib": "^1.10.0",
+    "save": "^2.4.0",
     "zone.js": "~0.9.1"
   },
   "devDependencies": {
@@ -38,6 +38,7 @@
     "@angular/cli": "~8.3.8",
     "@angular/compiler-cli": "~8.2.9",
     "@angular/language-service": "~8.2.9",
+    "@types/angular-toastr": "^1.6.34",
     "@types/jasmine": "~3.3.8",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~8.9.4",

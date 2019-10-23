@@ -7,8 +7,14 @@ import { CategoryService } from "../shared/category.service";
 
 import { switchMap } from "rxjs/operators";
 
-import {} from "toastr";
+import { ToastrService } from "ngx-toastr";
+
+//npm install ngx-toastr — save https://medium.com/better-programming/ngx-toastr-in-angular-7-185ac435011e
+
+import { ObjectUnsubscribedError } from 'rxjs';
+import { JsonpInterceptor } from '@angular/common/http';
 // https://www.npmjs.com/package/ngx-toastr
+
 // https://www.c-sharpcorner.com/article/implement-toastr-notification-in-angular-7/
 
 
@@ -29,8 +35,9 @@ export class CategoryFormComponent implements OnInit {
   constructor(
     private categoryService: CategoryService,
     private route: ActivatedRoute,
-    private roter: Router,
-    private formBuider: FormBuilder
+    private router: Router,
+    private formBuider: FormBuilder,
+    private toastrService: ToastrService    
   ) { }
 
   ngOnInit() {
@@ -43,6 +50,15 @@ export class CategoryFormComponent implements OnInit {
     this.setPageTitle();
   }
 
+  submitForm() {
+  
+    this.submittingForm = true;
+
+    if (this.currentAction == "new")
+      this.createCategory();
+    else
+      this.updateCategory();
+  }
 
   //private methods
   private setCurrentAction() {
@@ -55,8 +71,8 @@ export class CategoryFormComponent implements OnInit {
   private buildCategoryForm() {
     this.categoryForm = this.formBuider.group({
       id: [null],
-      name: [null, [Validators.required, Validators.minLength(2)]],
-      description: [null]
+      name: [null, [Validators.required, Validators.minLength(3)]],
+      description: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(20)]]
     });
   }
 
@@ -76,12 +92,55 @@ export class CategoryFormComponent implements OnInit {
   }
 
   private setPageTitle() {
-    if (this.currentAction == "new")
-      this.pageTitle = "Cadastro de Nova Categoria"
-    else {
+    // if (this.currentAction == "new"){
+    //   this.pageTitle = "Cadastro de Nova Categoria";
+    // }
+    // else {
       const categoryName = this.category.name || ""
       this.pageTitle = "Editando Categoria: " + categoryName;
+    // }
+  }
+
+  private createCategory() {
+    const category: Category = Object.assign(new Category(), this.categoryForm.value);
+
+    this.categoryService.create(category)
+      .subscribe(
+        category => this.actionForSuccess(category),
+        error => this.actionForError(error)
+      )
+
+  }
+
+
+  private actionForSuccess(category: Category) {
+    this.toastrService.success("Solicitação processada com Sucesso!", )
+
+    // nomedosite.com/categories/new  ==>>desse para o de baixo
+    // nomedosite.com/categories ==>> depois para o de abaixo
+    // nomedosite.com/categories/:id/edit
+    // skipLocationChange: false para não armazenar no history do navegador para não voltar
+    // não é navegação natural , foi só pra forçar
+
+    // é um redirect componente page
+    this.router.navigateByUrl("categories", { skipLocationChange: false }).then(
+      () => this.router.navigate(["categories", category.id, "edit"])
+    )
+  }
+
+  private actionForError(error) {
+    this.toastrService.error("Ocorreu um erro ao Processar sua Solicitação!");
+    
+    this.submittingForm = false;
+
+    if (error.status === 422) {
+      this.serverErrorMessages = JSON.parse(error._body).errors;
+    } else {
+      this.serverErrorMessages = ["Falha na Comunicação com o Servidor, tente mais tarde!"]
     }
+  }
+
+  private updateCategory() {
 
   }
 
